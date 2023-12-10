@@ -1,5 +1,10 @@
 package com.example.demo.lib;
 
+import com.example.demo.lib.models.Comment;
+import com.example.demo.lib.models.Project;
+import com.example.demo.lib.models.Task;
+import com.example.demo.lib.models.User;
+
 import java.sql.*;
 
 public class Dao {
@@ -72,20 +77,27 @@ public class Dao {
     }
 
 
-    public ResultSet fetchProjects(int userId) {
+    public Project[] fetchProjects(int userId) {
         String querySQL = "SELECT * FROM projects WHERE userId = ?";
         try {
             
-            PreparedStatement statement = connection.prepareStatement(querySQL);
+            PreparedStatement statement = connection.prepareStatement(querySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             statement.setInt(1, userId);
-            return statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.last();
+            Project[] projects = new Project[resultSet.getRow()];
+            resultSet.beforeFirst();
+            for (int i = 0; resultSet.next(); i++) {
+                projects[i] = new Project(resultSet.getString("name"), resultSet.getInt("userId"), resultSet.getInt("id"));
+            }
+            return projects;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    public ResultSet getUserByLogin(String login) {
+    public User getUserByLogin(String login) {
         String querySQL = "SELECT * FROM users WHERE login=?";
         try {
             
@@ -94,39 +106,53 @@ public class Dao {
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
 
-            return resultSet;
+            return new User(resultSet.getString("login"), resultSet.getString("password"), resultSet.getString("email"), resultSet.getInt("id"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    public ResultSet fetchTasks(int projectId) {
+    public Task[] fetchTasks(int projectId) {
         String querySQL = "SELECT * FROM tasks WHERE projectId = ?";
         try {
             
-            PreparedStatement statement = connection.prepareStatement(querySQL);
+            PreparedStatement statement = connection.prepareStatement(querySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             statement.setInt(1, projectId);
-            return statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.last();
+            Task[] tasks = new Task[resultSet.getRow()];
+            resultSet.beforeFirst();
+            for (int i = 0; resultSet.next(); i++) {
+                tasks[i] = new Task(resultSet.getString("name"), resultSet.getInt("projectId"), resultSet.getInt("id"));
+            }
+            return tasks;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    public ResultSet fetchComments(int taskId) {
+    public Comment[] fetchComments(int taskId) {
         String querySQL = "SELECT * FROM comments WHERE taskId = ?";
         try {
             
-            PreparedStatement statement = connection.prepareStatement(querySQL);
+            PreparedStatement statement = connection.prepareStatement(querySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             statement.setInt(1, taskId);
-            return statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.last();
+            Comment[] comments = new Comment[resultSet.getRow()];
+            resultSet.beforeFirst();
+            for (int i = 0; resultSet.next(); i++) {
+                comments[i] = new Comment(resultSet.getString("text"), resultSet.getInt("taskId"), resultSet.getInt("id"));
+            }
+            return comments;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ResultSet getUserById(int userId) {
+    public User getUserById(int userId) {
         String querySQL = "SELECT * FROM users WHERE id=?";
         try {
             
@@ -134,13 +160,13 @@ public class Dao {
             statement.setInt(1, userId);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
-            return resultSet;
+            return new User(resultSet.getString("login"), resultSet.getString("password"), resultSet.getString("email"), resultSet.getInt("id"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ResultSet getProjectById(int projectId) {
+    public Project getProjectById(int projectId) {
         String querySQL = "SELECT * FROM projects WHERE id=?";
         try {
             
@@ -148,13 +174,13 @@ public class Dao {
             statement.setInt(1, projectId);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
-            return resultSet;
+            return new Project(resultSet.getString("name"), resultSet.getInt("userId"), resultSet.getInt("id"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ResultSet getTaskById(int taskId) {
+    public Task getTaskById(int taskId) {
         String querySQL = "SELECT * FROM tasks WHERE id=?";
         try {
             
@@ -162,7 +188,7 @@ public class Dao {
             statement.setInt(1, taskId);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
-            return resultSet;
+            return new Task(resultSet.getString("name"), resultSet.getInt("projectId"), resultSet.getInt("id"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

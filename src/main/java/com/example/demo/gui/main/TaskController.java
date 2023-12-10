@@ -1,12 +1,12 @@
 package com.example.demo.gui.main;
 
+import com.example.demo.lib.models.Comment;
+import com.example.demo.lib.models.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-
-import java.sql.ResultSet;
 
 public class TaskController extends BaseController<Integer> {
     @FXML
@@ -19,13 +19,14 @@ public class TaskController extends BaseController<Integer> {
 
     @Override
     public void updateUI() {
-        if (!getUser()) return;
+        if (getUser()) return;
         commentsList.getItems().clear();
 
 
-        try (ResultSet resultSet = dao.fetchComments(arg)) {
-            while (resultSet.next()) {
-                String name = resultSet.getString("text");
+        try {
+            Comment[] resultSet = dao.fetchComments(arg);
+            for (Comment i : resultSet) {
+                String name = i.getText();
 
                 Label project = new Label(name);
                 commentsList.getItems().add(project);
@@ -40,9 +41,10 @@ public class TaskController extends BaseController<Integer> {
     @Override
     public void initialize(Integer arg) {
         super.initialize(arg);
-        try (ResultSet task = dao.getTaskById(arg)) {
-            projectNameLabel.setText("Project: " + dao.getProjectById(task.getInt("projectId")).getString("name"));
-            taskNameLabel.setText("Task: " + task.getString("name"));
+        try {
+            Task task = dao.getTaskById(arg);
+            projectNameLabel.setText("Project: " + dao.getProjectById(task.getProjectId()).getName());
+            taskNameLabel.setText("Task: " + task.getName());
         } catch (Throwable e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Error: " + e.getMessage());

@@ -12,7 +12,6 @@ public class ProjectApplication extends BaseApplication<Integer> {
 
     @Override
     public void start(Stage stage) {
-        System.out.println(arg);
         launch(stage,"main/project", "Project " + arg, arg);
     }
 

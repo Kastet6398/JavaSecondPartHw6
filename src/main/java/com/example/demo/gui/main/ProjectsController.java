@@ -1,9 +1,8 @@
 package com.example.demo.gui.main;
 
+import com.example.demo.lib.models.Project;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
-import java.sql.ResultSet;
 
 public class ProjectsController extends BaseController {
 
@@ -20,7 +19,7 @@ public class ProjectsController extends BaseController {
         String projectName = nameTextField.getText();
 
         try {
-            dao.createProject(projectName, user.getInt("id"));
+            dao.createProject(projectName, user.getId());
         } catch (Throwable e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Error: " + e.getMessage());
@@ -32,16 +31,14 @@ public class ProjectsController extends BaseController {
 
     @Override
     public void updateUI() {
-        if (!getUser()) return;
+        if (getUser()) return;
         projectsList.getItems().clear();
 
-        try (ResultSet resultSet = dao.fetchProjects(user.getInt("id"))) {
-            while (resultSet.next()) {
-                String name = resultSet.getString("name");
-                int id = resultSet.getInt("id");
-
-                Hyperlink project = new Hyperlink(name);
-                project.setOnMouseClicked(event -> viewProject(id));
+        try {
+            Project[] resultSet = dao.fetchProjects(user.getId());
+            for (Project i : resultSet) {
+                Hyperlink project = new Hyperlink(i.getName());
+                project.setOnMouseClicked(event -> viewProject(i.getId()));
                 projectsList.getItems().add(project);
             }
         } catch (Throwable e) {

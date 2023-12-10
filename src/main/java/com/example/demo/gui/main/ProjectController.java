@@ -1,9 +1,8 @@
 package com.example.demo.gui.main;
 
+import com.example.demo.lib.models.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
-import java.sql.ResultSet;
 
 public class ProjectController extends BaseController<Integer> {
 
@@ -19,17 +18,15 @@ public class ProjectController extends BaseController<Integer> {
 
     @Override
     public void updateUI() {
-        if (!getUser()) return;
+        if (getUser()) return;
         tasksList.getItems().clear();
 
 
-        try (ResultSet resultSet = dao.fetchTasks(arg)) {
-            while (resultSet.next()) {
-                String name = resultSet.getString("name");
-                int id = resultSet.getInt("id");
-
-                Hyperlink project = new Hyperlink(name);
-                project.setOnMouseClicked(event -> viewProject(id));
+        try {
+            Task[] resultSet = dao.fetchTasks(arg);
+            for (Task i : resultSet) {
+                Hyperlink project = new Hyperlink(i.getName());
+                project.setOnMouseClicked(event -> viewProject(i.getId()));
                 tasksList.getItems().add(project);
             }
         } catch (Throwable e) {
@@ -43,7 +40,7 @@ public class ProjectController extends BaseController<Integer> {
     public void initialize(Integer arg) {
         super.initialize(arg);
         try {
-            projectNameLabel.setText("Project: " + dao.getProjectById(arg).getString("name"));
+            projectNameLabel.setText("Project: " + dao.getProjectById(arg).getName());
         } catch (Throwable e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Error: " + e.getMessage());

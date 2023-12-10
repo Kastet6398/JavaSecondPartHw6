@@ -4,16 +4,16 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.demo.lib.exceptions.AuthException;
+import com.example.demo.lib.models.User;
 
 import java.io.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
 
 public class Auth {
 
-    public static ResultSet getUser(Dao dao) throws IOException {
+    public static User getUser(Dao dao) throws IOException {
         int userId = Integer.parseInt(Objects.requireNonNull(decrypt(new BufferedReader(new FileReader(Settings.TOKEN_FILE)).readLine())).getIssuer());
         return dao.getUserById(userId);
     }
@@ -21,13 +21,13 @@ public class Auth {
     public static void login(String login, String password, Dao dao) throws AuthException, SQLException, UnsupportedEncodingException {
         if (login == null || password == null)  throw new AuthException("Login and password must not be null");
 
-        ResultSet user = dao.getUserByLogin(login);
-        if (!Objects.equals(user.getString("password"), password)) {
+        User user = dao.getUserByLogin(login);
+        if (!Objects.equals(user.getPassword(), password)) {
             throw new AuthException("Authentication failed");
         }
 
 
-        int userId = user.getInt("id");
+        int userId = user.getId();
         String token = encrypt(userId);
         writeTokenToFile(token);
 
@@ -54,7 +54,7 @@ public class Auth {
                 .verify(token);
     }
 
-    public static void logout() {
-        new File(Settings.TOKEN_FILE).delete();
+    public static boolean logout() {
+        return new File(Settings.TOKEN_FILE).delete();
     }
 }

@@ -12,7 +12,6 @@ public class TaskApplication extends BaseApplication<Integer> {
 
     @Override
     public void start(Stage stage) {
-        System.out.println(arg);
         launch(stage,"main/task", "Task " + arg, arg);
     }
 

@@ -3,13 +3,13 @@ package com.example.demo.gui.main;
 import com.example.demo.gui.auth.LoginApplication;
 import com.example.demo.gui.auth.RegistrationApplication;
 import com.example.demo.lib.Auth;
-import javafx.event.ActionEvent;
+import com.example.demo.lib.models.User;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 
 public abstract class BaseController<I> extends com.example.demo.gui.BaseController<I> {
 
@@ -20,7 +20,7 @@ public abstract class BaseController<I> extends com.example.demo.gui.BaseControl
     @FXML
     public Label greetingLabel;
 
-    protected ResultSet user;
+    protected User user;
 
     @Override
     public void initialize(I arg) {
@@ -31,12 +31,12 @@ public abstract class BaseController<I> extends com.example.demo.gui.BaseControl
     protected boolean getUser() {
         try {
             user = Auth.getUser(dao);
-            greetingLabel.setText("Hello, " + user.getString("login") + "!");
-            return true;
+            greetingLabel.setText("Hello, " + user.getLogin() + "!");
+            return false;
         } catch (Throwable e) {
             loggedIn.setVisible(false);
             loggedOut.setVisible(true);
-            return false;
+            return true;
         }
     }
 
@@ -44,18 +44,23 @@ public abstract class BaseController<I> extends com.example.demo.gui.BaseControl
 
     @FXML
     protected void logout() throws IOException {
-        Auth.logout();
-        new RegistrationApplication().start(stage);
+        if (Auth.logout())
+            new RegistrationApplication().start(stage);
+        else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Error logging out: cannot delete token file.");
+            alert.show();
+        }
     }
 
 
     @FXML
-    protected void login(ActionEvent event) throws IOException {
+    protected void login() throws IOException {
         new LoginApplication().start(stage);
     }
 
     @FXML
-    protected void register(ActionEvent event) throws IOException {
+    protected void register() throws IOException {
         new RegistrationApplication().start(stage);
     }
 }
