@@ -41,14 +41,14 @@ public class Auth {
         }
     }
 
-    public static String encrypt(int userId) throws UnsupportedEncodingException {
+    public static String encrypt(int userId) {
         return JWT.create()
                 .withIssuer(String.valueOf(userId))
                 .withIssuedAt(new Date())
                 .sign(Algorithm.HMAC256(Settings.SECRET_KEY));
     }
 
-    public static DecodedJWT decrypt(String token) throws UnsupportedEncodingException {
+    public static DecodedJWT decrypt(String token) {
         return JWT.require(Algorithm.HMAC256(Settings.SECRET_KEY))
                 .build()
                 .verify(token);

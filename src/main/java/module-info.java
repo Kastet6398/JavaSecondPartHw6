@@ -5,8 +5,8 @@ open module com.example.demo {
     requires org.kordamp.bootstrapfx.core;
     requires java.desktop;
     requires java.sql;
-    requires java.jwt;
     requires freemarker;
+    requires com.auth0.jwt;
 
     // Lib
     exports com.example.demo.lib.exceptions;
