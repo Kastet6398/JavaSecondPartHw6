@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.gui.main.TaskController">
+
+    <VBox fx:id="loggedIn" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <Label fx:id="greetingLabel" />
+        <Button onAction="#logout" text="Logout" />
+        <Label fx:id="projectNameLabel"/>
+        <Label fx:id="taskNameLabel"/>
+        <Label text="Comment Text:" />
+        <TextField fx:id="textTextField" />
+        <Button onAction="#createComment" text="Create Comment" />
+        <ListView fx:id="commentsList"/>
+    </VBox>
+
+    <VBox fx:id="loggedOut" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <Button onAction="#login" text="Login" />
+        <Button onAction="#register" text="Register" />
+        <Label text="You must be logged in to manage your tasks." />
+    </VBox>
+
+</AnchorPane>
