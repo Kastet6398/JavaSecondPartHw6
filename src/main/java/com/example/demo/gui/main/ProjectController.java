@@ -1,8 +1,12 @@
 package com.example.demo.gui.main;
 
+import com.example.demo.lib.fields.CustomCheckBox;
 import com.example.demo.lib.models.Task;
+import com.example.demo.lib.models.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+
+import java.util.List;
 
 public class ProjectController extends BaseController<Integer> {
 
@@ -12,6 +16,7 @@ public class ProjectController extends BaseController<Integer> {
     public Label greetingLabel;
     @FXML
     public Label projectNameLabel;
+    public ListView<CustomCheckBox> usersWithAccess;
 
     @FXML
     private TextField nameTextField;
@@ -46,6 +51,9 @@ public class ProjectController extends BaseController<Integer> {
             alert.setContentText("Error: " + e.getMessage());
             alert.show();
         }
+
+        for (User i : dao.getProjectUsers(arg))
+            usersWithAccess.getItems().add(new CustomCheckBox(i));
     }
 
     private void viewProject(int id) {
@@ -54,8 +62,13 @@ public class ProjectController extends BaseController<Integer> {
 
     public void createTask() {
         String taskName = nameTextField.getText();
+        List<CustomCheckBox> choiceUsers = usersWithAccess.getItems().filtered(CustomCheckBox::isSelected).stream().toList();
+        User[] users = new User[choiceUsers.size()];
+        for (CustomCheckBox i : choiceUsers)
+            users[choiceUsers.indexOf(i)] = i.getUser();
+
         try {
-            dao.createTask(taskName, arg);
+            dao.createTask(taskName, arg, users);
         } catch (Throwable e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Error: " + e.getMessage());

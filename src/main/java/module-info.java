@@ -9,6 +9,7 @@ open module com.example.demo {
 
     // Lib
     exports com.example.demo.lib.exceptions;
+    exports com.example.demo.lib.fields;
     exports com.example.demo.lib.models;
     exports com.example.demo.lib;
 

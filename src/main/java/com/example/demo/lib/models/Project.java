@@ -2,24 +2,24 @@ package com.example.demo.lib.models;
 
 public class Project extends BaseModel {
     private final String name;
-    private final int userId;
+    private final User[] usersWithAccess;
 
     public String getName() {
         return name;
     }
 
-    public int getUserId() {
-        return userId;
+    public User[] getUserWithAccess() {
+        return usersWithAccess;
     }
 
-    public Project(String name, int userId) {
+    public Project(String name, User[] usersWithAccess) {
         this.name = name;
-        this.userId = userId;
+        this.usersWithAccess = usersWithAccess;
     }
 
-    public Project(String name, int projectId, int id) {
+    public Project(String name, User[] usersWithAccess, int id) {
         this.name = name;
-        this.userId = projectId;
+        this.usersWithAccess = usersWithAccess;
         this.id = id;
     }
 }

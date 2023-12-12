@@ -17,6 +17,8 @@
 
         <Label text="Project Name:" />
         <TextField fx:id="nameTextField" />
+        <Label text="Users with access:" />
+        <ListView fx:id="usersWithAccess" maxHeight="200" />
         <Button onAction="#createProject" text="Create Project" />
 
         <ListView fx:id="projectsList" />

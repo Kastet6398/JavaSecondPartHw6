@@ -2,6 +2,7 @@ package com.example.demo.gui.main;
 
 import com.example.demo.lib.models.Comment;
 import com.example.demo.lib.models.Task;
+import com.example.demo.lib.models.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -16,6 +17,7 @@ public class TaskController extends BaseController<Integer> {
     public TextField textTextField;
     public Label taskNameLabel;
     public ListView<Label> commentsList;
+    public Label taskExecutorsLabel;
 
     @Override
     public void updateUI() {
@@ -45,6 +47,13 @@ public class TaskController extends BaseController<Integer> {
             Task task = dao.getTaskById(arg);
             projectNameLabel.setText("Project: " + dao.getProjectById(task.getProjectId()).getName());
             taskNameLabel.setText("Task: " + task.getName());
+            StringBuilder executors = new StringBuilder(10000);
+            User[] executorsArray = dao.getTaskExecutors(arg);
+            for (int i = 0; i < executorsArray.length; i++) {
+                executors.append(executorsArray[i].getLogin()).append(" <").append(executorsArray[i].getEmail()).append(">");
+                if (i < executorsArray.length - 1) executors.append(", ");
+            }
+            taskExecutorsLabel.setText("Executors: " + executors);
         } catch (Throwable e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Error: " + e.getMessage());

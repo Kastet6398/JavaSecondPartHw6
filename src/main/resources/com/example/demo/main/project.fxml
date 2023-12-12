@@ -11,6 +11,8 @@
         <Label fx:id="projectNameLabel" />
         <Label text="Task Name:" />
         <TextField fx:id="nameTextField" />
+        <Label text="Task executors:" />
+        <ListView fx:id="usersWithAccess" maxHeight="200" />
         <Button onAction="#createTask" text="Create Task" />
         <ListView fx:id="tasksList"/>
     </VBox>

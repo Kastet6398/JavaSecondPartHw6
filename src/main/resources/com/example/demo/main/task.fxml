@@ -10,6 +10,7 @@
         <Button onAction="#logout" text="Logout" />
         <Label fx:id="projectNameLabel"/>
         <Label fx:id="taskNameLabel"/>
+        <Label fx:id="taskExecutorsLabel"/>
         <Label text="Comment Text:" />
         <TextField fx:id="textTextField" />
         <Button onAction="#createComment" text="Create Comment" />
