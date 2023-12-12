@@ -6,9 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 public abstract class BaseApplication<I> extends Application {
     public I arg;
@@ -39,7 +39,7 @@ public abstract class BaseApplication<I> extends Application {
     }
     public void launch(Stage stage, String template, String title) {
         try {
-            if (isParameterizedWithGenerics(this)) throw new IllegalArgumentException("Must provide an additional argument");
+            if (isParameterizedWithGenerics()) throw new IllegalArgumentException("Must provide an additional argument");
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/demo/" + template + ".fxml"));
             Parent root = fxmlLoader.load();
 
@@ -59,14 +59,10 @@ public abstract class BaseApplication<I> extends Application {
         }
     }
 
-    private static <T> boolean isParameterizedWithGenerics(BaseApplication<T> instance) {
-        Type superclassType = instance.getClass().getGenericSuperclass();
+    private <T> boolean isParameterizedWithGenerics() {
 
-        if (superclassType instanceof ParameterizedType parameterizedType) {
-            Type[] typeArguments = parameterizedType.getActualTypeArguments();
-
-            return typeArguments.length > 0;
-        }
+        if (getClass().getGenericSuperclass() instanceof ParameterizedType parameterizedType)
+            return parameterizedType.getActualTypeArguments().length > 0;
 
         return false;
     }
